@@ -13,7 +13,7 @@ use App\Services\User\UpdateUserService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
-class UserController extends Controller
+class TodoController extends Controller
 {
     /**
      * Get all users.

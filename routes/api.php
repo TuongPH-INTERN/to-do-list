@@ -1,8 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Payment\PaymentController;
-use App\Http\Controllers\User\UserController;
+use App\Http\Controllers\User\TodoController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -28,12 +27,7 @@ Route::POST('/verify-email', [AuthController::class, 'verifyEmail'])->name('veri
 Route::GET('/logout', [AuthController::class, 'logout'])->middleware('auth:api');
 
 Route::group([
-    'prefix' => 'users',
-    'middleware' => ['auth:api', 'not-user'],
+    'middleware' => ['auth:api'],
 ], function () {
-    Route::GET('/', [UserController::class, 'index']);
-    Route::POST('/', [UserController::class, 'store']);
-    Route::GET('/{id}', [UserController::class, 'show']);
-    Route::PUT('/{id}', [UserController::class, 'update'])->middleware('update-user');;
-    Route::DELETE('/{id}', [UserController::class, 'destroy']);
+    Route::GET('/', [TodoController::class, 'index']);
 });
