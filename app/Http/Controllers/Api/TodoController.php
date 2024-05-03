@@ -1,17 +1,16 @@
 <?php
 
-namespace App\Http\Controllers\User;
+namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\CreateUserRequest;
-use App\Http\Requests\UpdateUserRequest;
-use App\Services\User\CreateUserService;
-use App\Services\User\DeleteUserService;
-use App\Services\User\GetUserService;
-use App\Services\User\ShowUserService;
-use App\Services\User\UpdateUserService;
+use App\Http\Requests\TaskRequest;
+use App\Services\Task\CreateTaskService;
+use App\Services\Task\DeleteTaskService;
+use App\Services\Task\GetTaskService;
+use App\Services\Task\ShowTaskService;
+use App\Services\Task\UpdateTaskService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 class TodoController extends Controller
 {
@@ -23,11 +22,11 @@ class TodoController extends Controller
      */
     public function index(Request $request)
     {
-        $users = resolve(GetUserService::class)->setParams($request)->handle();
+        $tasks = resolve(GetTaskService::class)->setParams($request)->handle();
 
         return $this->responseSuccess([
             'message' => __('messages.success'),
-            'users' => $users,
+            'tasks' => $tasks,
         ]);
     }
 
@@ -37,17 +36,17 @@ class TodoController extends Controller
      * @param CreateUserRequest $request
      * @return Response
      */
-    public function store(CreateUserRequest $request)
+    public function store(TaskRequest $request)
     {
         $data = $request->validated();
-        $data['password'] = Hash::make($request->password);
+        $data['user_id'] = Auth::user()->id;
 
-        $user = resolve(CreateUserService::class)->setParams($data)->handle();
+        $task = resolve(CreateTaskService::class)->setParams($data)->handle();
 
-        if ($user) {
+        if ($task) {
             return $this->responseSuccess([
                 'message' => __('messages.success'),
-                'user' => $user,
+                'task' => $task,
             ]);
         }
 
@@ -55,39 +54,39 @@ class TodoController extends Controller
     }
 
     /**
-     * Show user by ID.
+     * Show task by ID.
      *
-     * @param int $userId
+     * @param int $taskId
      * @return Response
      */
-    public function show(int $userId)
+    public function show(int $taskId)
     {
-        $user = resolve(ShowUserService::class)->setParams($userId)->handle();
+        $task = resolve(ShowTaskService::class)->setParams($taskId)->handle();
 
         return $this->responseSuccess([
             'message' => __('messages.success'),
-            'users' => $user
+            'task' => $task
         ]);
     }
 
     /**
-     * Update user's information.
+     * Update task's content.
      *
      * @param UpdateUserRequest $request
-     * @param int $userId
+     * @param int $taskId
      * @return Response
      */
-    public function update(UpdateUserRequest $request, int $userId)
+    public function update(TaskRequest $request, int $taskId)
     {
         $data['information'] = $request->validated();
-        $data['id'] = $userId;
+        $data['id'] = $taskId;
 
-        $user = resolve(UpdateUserService::class)->setParams($data)->handle();
+        $task = resolve(UpdateTaskService::class)->setParams($data)->handle();
 
-        if ($user) {
+        if ($task) {
             return $this->responseSuccess([
                 'message' => __('messages.success'),
-                'users' => $user
+                'task' => $task
             ]);
         }
 
@@ -95,16 +94,16 @@ class TodoController extends Controller
     }
 
     /**
-     * Delete user by ID.
+     * Delete task by ID.
      *
-     * @param int $userId
+     * @param int $taskId
      * @return Response
      */
-    public function destroy(int $userId)
+    public function destroy(int $taskId)
     {
-        $user = resolve(DeleteUserService::class)->setParams($userId)->handle();
+        $task = resolve(DeleteTaskService::class)->setParams($taskId)->handle();
 
-        if ($user) {
+        if ($task) {
             return $this->responseSuccess([
                 'message' => __('messages.success'),
             ]);

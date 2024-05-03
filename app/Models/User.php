@@ -70,4 +70,9 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->belongsTo('App\Models\Role', 'role_id');
     }
+
+    public function Task()
+    {
+        return $this->hasMany('App\Models\Task', 'user_id');
+    }
 }
