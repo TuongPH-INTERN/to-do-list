@@ -29,11 +29,15 @@ class GetTaskService extends BaseService
             }
 
             $keyWord = htmlspecialchars($this->data->key_word) ?? null;
+            $filter = $this->data->filter ?? null;
+            $sort =  $this->data->sort ?? null;
 
             $data = [
                 'key_word' => $keyWord,
                 'per_page' => $perPage,
                 'user_id' => $userId,
+                'filter' => $filter,
+                'sort' => $sort,
             ];
 
             $tasks =  $this->taskRepository->getListTask($data);
@@ -43,8 +47,10 @@ class GetTaskService extends BaseService
                     $task->update(['status' => TaskStatus::EXPIRED]);
                 }
             }
+            
+            $totalTasks = $this->taskRepository->getTotalTasks($userId);
 
-            return $tasks;
+            return ['tasks' => $tasks, 'total_tasks' => $totalTasks];
         } catch (Exception $e) {
             Log::info($e);
 
