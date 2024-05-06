@@ -62,16 +62,7 @@ class TaskRepository extends BaseRepository implements TaskRepositoryInterface
         }
 
         if ($sort) {
-            switch ($sort) {
-                case 'asc':
-                    $query->orderBy('date', 'ASC');
-                    break;
-                case 'desc':
-                    $query->orderBy('date', 'DESC');
-                    break;
-            }
-        } else {
-            $query->orderBy('created_at', 'DESC');
+            $query->orderBy('date', $sort);
         }
 
         return $query->paginate($perPage);

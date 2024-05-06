@@ -30,7 +30,7 @@ class GetTaskService extends BaseService
 
             $keyWord = htmlspecialchars($this->data->key_word) ?? null;
             $filter = $this->data->filter ?? null;
-            $sort =  $this->data->sort ?? null;
+            $sort =  $this->data->sort ?? 'DESC';
 
             $data = [
                 'key_word' => $keyWord,
@@ -47,7 +47,7 @@ class GetTaskService extends BaseService
                     $task->update(['status' => TaskStatus::EXPIRED]);
                 }
             }
-            
+
             $totalTasks = $this->taskRepository->getTotalTasks($userId);
 
             return ['tasks' => $tasks, 'total_tasks' => $totalTasks];
