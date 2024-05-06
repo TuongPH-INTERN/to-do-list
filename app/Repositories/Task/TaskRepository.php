@@ -6,6 +6,7 @@ use App\Interfaces\Task\TaskRepositoryInterface;
 use App\Repositories\BaseRepository;
 use App\Models\Task;
 use App\Enums\TaskStatus;
+use Carbon\Carbon;
 
 class TaskRepository extends BaseRepository implements TaskRepositoryInterface
 {
@@ -44,29 +45,19 @@ class TaskRepository extends BaseRepository implements TaskRepositoryInterface
         $userId = $data['user_id'];
         $filter = $data['filter'];
         $sort = $data['sort'];
-       
+
         $query = $this->model->select('*')->where('user_id', $userId);
-      
+
         if ($keyWord) {
             $query->where(function ($query) use ($keyWord) {
                 $query->where('task_name', 'LIKE', "%{$keyWord}%")
-                ->orWhere('date', 'LIKE', "%{$keyWord}%");
+                    ->orWhere('date', 'LIKE', "%{$keyWord}%");
             });
         }
-       
+
         if ($filter) {
-           $query->where(function ($query) use ($filter) {
-                switch ($filter) {
-                    case TaskStatus::DOING:
-                        $query = $query->where('status', TaskStatus::DOING);
-                        break;
-                    case TaskStatus::EXPIRED:
-                        $query = $query->where('status', TaskStatus::EXPIRED);
-                        break;
-                    case TaskStatus::COMPLETED:
-                        $query = $query->where('status', TaskStatus::COMPLETED);
-                        break;
-                }
+            $query->where(function ($query) use ($filter) {
+                $query = $query->where('status', $filter);
             });
         }
 
@@ -82,7 +73,27 @@ class TaskRepository extends BaseRepository implements TaskRepositoryInterface
         } else {
             $query->orderBy('created_at', 'DESC');
         }
-    
+
         return $query->paginate($perPage);
+    }
+
+    /**
+     * Get list usre to reminder email
+     *
+     * @return App\Models\Task|null
+     */
+    public function getListUserReminderMail()
+    {
+        $today = Carbon::today()->toDateString();
+
+        $query = $this->model
+            ->leftJoin('users', 'tasks.user_id', '=', 'users.id')
+            ->select('users.email', 'tasks.task_name', 'users.id')
+            ->where('tasks.status', TaskStatus::DOING)
+            ->whereDate('tasks.date', $today)
+            ->groupBy('users.id', 'tasks.task_name')
+            ->get();
+
+        return $query;
     }
 }
