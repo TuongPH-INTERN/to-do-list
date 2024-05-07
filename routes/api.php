@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\User\TodoController;
+use App\Http\Controllers\Api\TodoController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -28,6 +28,11 @@ Route::GET('/logout', [AuthController::class, 'logout'])->middleware('auth:api')
 
 Route::group([
     'middleware' => ['auth:api'],
+    'prefix' => 'task',
 ], function () {
     Route::GET('/', [TodoController::class, 'index']);
+    Route::POST('/', [TodoController::class, 'store']);
+    Route::GET('/{id}', [TodoController::class, 'show']);
+    Route::PUT('/{id}', [TodoController::class, 'update']);
+    Route::DELETE('/{id}', [TodoController::class, 'destroy']);
 });
