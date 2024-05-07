@@ -27,7 +27,7 @@ Route::POST('/verify-email', [AuthController::class, 'verifyEmail'])->name('veri
 Route::GET('/logout', [AuthController::class, 'logout'])->middleware('auth:api');
 
 Route::group([
-    // 'middleware' => ['auth:api'],
+    'middleware' => ['auth:api'],
     'prefix' => 'task',
 ], function () {
     Route::GET('/', [TodoController::class, 'index']);

@@ -33,9 +33,9 @@ class TodoController extends Controller
     }
 
     /**
-     * Create user.
+     * Create task.
      *
-     * @param CreateUserRequest $request
+     * @param TaskRequest $request
      * @return Response
      */
     public function store(TaskRequest $request)

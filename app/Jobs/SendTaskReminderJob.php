@@ -42,7 +42,7 @@ class SendTaskReminderJob implements ShouldQueue
      */
     public function handle()
     {
-        Log::info('Sending email to: ' . $this->email); // Đặt log để tracking xem nó có vào được function hay không
+        Log::info('Sending email to: ' . $this->email); // tracking log
 
         Mail::send($this->view, ['tasks' => $this->tasks], function ($message) {
             $message->to($this->email);
